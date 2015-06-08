@@ -27,8 +27,7 @@ Usage
 
 TODO
 ----
-1. Give auto padding to image for rounded images
-2. Use cache to strore images
+1. Use cache to store images
 
 License
 ----
