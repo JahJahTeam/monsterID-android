@@ -8,6 +8,11 @@ I decided to make my own implementation for android.
 
 You can learn more about it at: http://www.splitbrain.org/projects/monsterid
 
+
+
+<img src="sample.gif">
+
+
 ###### How it works:
 
 1. Convert your email/name/ip in md5
