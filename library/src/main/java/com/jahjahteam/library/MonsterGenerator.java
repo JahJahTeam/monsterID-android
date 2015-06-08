@@ -5,8 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
+import android.graphics.Color;
 import android.graphics.Matrix;
-import android.util.Log;
+import android.graphics.Paint;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.PorterDuffXfermode;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -19,8 +22,7 @@ import java.util.Random;
  */
 public class MonsterGenerator {
 
-    private static final String TAG = MonsterGenerator.class.getName();
-    String order[] = {"legs","hair","arms","body","eyes","mouth"};
+    String order[] = {"legs","clegs", "hair","chair", "arms","carms", "body","cbody", "eyes","ceyes", "mouth","cmouth"};
     Context ctx;
     HashMap parts;
 
@@ -29,16 +31,24 @@ public class MonsterGenerator {
         parts = new HashMap();
     }
 
+
     public Bitmap getMyMonster(String stringId,int color) {
+
+
         getRandomBodyParts(stringId);
         Bitmap bitmap = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.back);
 
-        for (int i = 0; i < this.parts.size(); i+=1) {
+
+        for (int i = 0; i < this.parts.size(); i+=2) {
             //get part from resource
             String s = (new StringBuilder()).append(order[i]).append("_").append(this.parts.get(order[i])).toString();
-            Log.d(TAG,s);
             int j = ctx.getResources().getIdentifier(s, "drawable", ctx.getPackageName());
-            bitmap = overlay(bitmap, BitmapFactory.decodeResource(ctx.getResources(),j));
+
+            //apply color
+            Bitmap partColored = colorizeThisPart(BitmapFactory.decodeResource(ctx.getResources(),j),(float)this.parts.get(order[i+1]));
+
+            //overlay to previous monster
+            bitmap = overlay(bitmap, partColored);
         }
 
         Bitmap auxBack = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -82,14 +92,62 @@ public class MonsterGenerator {
         int eyes = (rand.nextInt(20 - 1) + 1);
         int mouth = (rand.nextInt(17 - 1) + 1);
 
+        float clegs = (rand.nextFloat());
+        float chair = (rand.nextFloat());
+        float carms = (rand.nextFloat());
+        float cbody = (rand.nextFloat());
+        float ceyes = (rand.nextFloat());
+        float cmouth = (rand.nextFloat());
+
         this.parts.put("mouth", mouth);
+        this.parts.put("cmouth", cmouth);
+
         this.parts.put("eyes", eyes);
+        this.parts.put("ceyes", ceyes);
+
         this.parts.put("body", body);
+        this.parts.put("cbody", cbody);
+
         this.parts.put("hair", hair);
+        this.parts.put("chair", chair);
+
         this.parts.put("legs", legs);
+        this.parts.put("clegs", clegs);
+
         this.parts.put("arms", arms);
+        this.parts.put("carms", carms);
+
+
+
     }
 
+
+    private Bitmap colorizeThisPart(Bitmap partToColorize, float color){
+
+        Bitmap bitmap1 = Bitmap.createBitmap(partToColorize.getWidth(), partToColorize.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap1);
+        Paint paint = new Paint();
+        paint.setColorFilter(new PorterDuffColorFilter(generateRandomColor(color), android.graphics.PorterDuff.Mode.MULTIPLY));
+        canvas.drawBitmap(partToColorize, 0.0F, 0.0F, paint);
+        paint.setXfermode(new PorterDuffXfermode(android.graphics.PorterDuff.Mode.LIGHTEN));
+        canvas.drawBitmap(partToColorize, 0.0F, 0.0F, paint);
+        return bitmap1;
+    }
+
+    private int generateRandomColor(float hue){
+        //Log.d("color",hue+"");
+
+        //int colorPos = 0;
+        double goldenRatioConj = (1.0 + Math.sqrt(5.0)) / 2.0;
+        //float hue = new Random().nextFloat();
+
+        hue += goldenRatioConj;
+        hue = hue % 1;
+        hue = Math.round(hue * 360);
+        float[] hsvTmp = {hue, 0.5f, 0.95f};
+
+        return Color.HSVToColor(hsvTmp);
+    }
 
     private Bitmap overlay(Bitmap bitmap, Bitmap bitmap1) {
         Bitmap bitmap2 = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
@@ -98,6 +156,7 @@ public class MonsterGenerator {
         canvas.drawBitmap(bitmap1, new Matrix(), null);
         return bitmap2;
     }
+    
     //aux
     private static int hex2decimal(String s) {
         String digits = "0123456789ABCDEF";
