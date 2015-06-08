@@ -25,8 +25,16 @@ TODO
 1. Give auto padding to image for rounded images
 2. Use cache to strore images
 
-license
+License
 ----
+
+#### Monster "parts" lincense
+
+for this application we use the artwork of  Scott Sherrill, which is distributed under a [Creative Commons Attribution 2.5 License](https://creativecommons.org/licenses/by/2.5/).
+
+For more information see his web site: http://scott.sherrillmix.com/blog/blogger/wp_monsterid/
+
+#### This application license
 ###### The MIT License (MIT)
 
 Copyright (c) 2015 Alexandre Pinheiro
