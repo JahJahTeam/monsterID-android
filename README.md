@@ -22,7 +22,9 @@ Usage
 
 TODO
 ----
-1. Use cache to strore images
+1. Colorize
+2. Give auto padding to image for rounded images
+3. Use cache to strore images
 
 license
 ----
