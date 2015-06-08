@@ -17,12 +17,11 @@ import java.util.HashMap;
 
 import java.util.Random;
 
-/**
- * Created by Alexandre on 02-06-2015.
- */
+
 public class MonsterGenerator {
 
-    String order[] = {"legs","clegs", "hair","chair", "arms","carms", "body","cbody", "eyes","ceyes", "mouth","cmouth"};
+
+    String order[] = {"legs", "clegs", "hair", "chair", "arms", "carms", "body", "cbody", "eyes", "ceyes", "mouth", "cmouth"};
     Context ctx;
     HashMap parts;
 
@@ -32,29 +31,30 @@ public class MonsterGenerator {
     }
 
 
-    public Bitmap getMyMonster(String stringId,int color) {
+    public Bitmap getMyMonster(String stringId, int color) {
 
 
         getRandomBodyParts(stringId);
         Bitmap bitmap = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.back);
 
+        int padding = getPadding(bitmap.getWidth(), bitmap.getHeight());
 
-        for (int i = 0; i < this.parts.size(); i+=2) {
+        for (int i = 0; i < this.parts.size(); i += 2) {
             //get part from resource
             String s = (new StringBuilder()).append(order[i]).append("_").append(this.parts.get(order[i])).toString();
             int j = ctx.getResources().getIdentifier(s, "drawable", ctx.getPackageName());
 
             //apply color
-            Bitmap partColored = colorizeThisPart(BitmapFactory.decodeResource(ctx.getResources(),j),(float)this.parts.get(order[i+1]));
+            Bitmap partColored = colorizeThisPart(BitmapFactory.decodeResource(ctx.getResources(), j), (float) this.parts.get(order[i + 1]));
 
             //overlay to previous monster
             bitmap = overlay(bitmap, partColored);
         }
 
-        Bitmap auxBack = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap auxBack = Bitmap.createBitmap(bitmap.getWidth() + padding * 2, bitmap.getHeight() + padding * 2, Bitmap.Config.ARGB_8888);
         auxBack.eraseColor(color);
 
-        bitmap = overlay(auxBack,bitmap);
+        bitmap = overlay(auxBack, bitmap, padding);
         return bitmap;
     }
 
@@ -118,11 +118,10 @@ public class MonsterGenerator {
         this.parts.put("carms", carms);
 
 
-
     }
 
 
-    private Bitmap colorizeThisPart(Bitmap partToColorize, float color){
+    private Bitmap colorizeThisPart(Bitmap partToColorize, float color) {
 
         Bitmap bitmap1 = Bitmap.createBitmap(partToColorize.getWidth(), partToColorize.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap1);
@@ -134,7 +133,7 @@ public class MonsterGenerator {
         return bitmap1;
     }
 
-    private int generateRandomColor(float hue){
+    private int generateRandomColor(float hue) {
         //Log.d("color",hue+"");
 
         //int colorPos = 0;
@@ -156,7 +155,16 @@ public class MonsterGenerator {
         canvas.drawBitmap(bitmap1, new Matrix(), null);
         return bitmap2;
     }
-    
+
+    private Bitmap overlay(Bitmap bitmap, Bitmap bitmap1, int padding) {
+        Bitmap bitmap2 = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap2);
+        canvas.drawBitmap(bitmap, new Matrix(), null);
+        canvas.drawBitmap(bitmap1, padding, padding, null);
+        return bitmap2;
+    }
+
+
     //aux
     private static int hex2decimal(String s) {
         String digits = "0123456789ABCDEF";
@@ -168,5 +176,12 @@ public class MonsterGenerator {
             val = 16 * val + d;
         }
         return val;
+    }
+
+
+    public int getPadding(int width, int height) {
+        double hipt = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / 2;
+        long padding = Math.round(hipt - width / 2);
+        return (int) padding;
     }
 }
