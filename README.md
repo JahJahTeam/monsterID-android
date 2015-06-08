@@ -16,11 +16,8 @@ You can learn more about it at: http://www.splitbrain.org/projects/monsterid
 4. Put parts of monster together and colorize them
 
 
-
-
 Usage
 ----
-
 
 
 TODO
